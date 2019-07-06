@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.ClassMapper">
+   <resultMap id="classRM" type="classBean">
+          <id property="id" column="pk_class_id"/>
+          <result property="className" column="f_class_name" />
+          <result property="principal" column="f_class_principal" />
+          <result property="tel" column="f_class_tel" />
+          <result property="personNumber" column="f_class_personNumber" />
+          <result property="areaId" column="fk_area_id" />
+          <result property="areaName" column="f_area_name" />
+          <association property="areaBean" javaType="areaBean" column="fk_area_id" select="getlockByHomID"/>
+   </resultMap>
+   
+   <resultMap id="areaRM" type="areaBean">
+	      <result property="id" column="pk_area_id"/>
+	      <result property="areaName" column="f_area_name"/>
+	      <result property="treeKind" column="f_area_treeKind"/>
+	      <result property="treeAdvantage" column="f_area_treeAdvantage"/>
+	      <result property="areaKind" column="f_area_areaKind"/>
+	      <result property="classId" column="fk_class_id"/>
+   </resultMap> 
+   
+   
+	<select id="findById"   resultMap="classRM" >
+	 	select * from t_class where  pk_class_id=#{id}
+	</select>
+	
+	<select id="getlockByHomID"  parameterType="int"  resultMap="areaRM" >
+	 	select * from t_area where  pk_area_id=#{id}
+	</select>
+	
+	<insert id="add" parameterType="classBean">
+	 	insert into t_class values(null,#{areaId},#{className},#{principal},#{tel},#{personNumber})
+	</insert>
+	<select id="findByItem"  resultMap="classRM">
+	      select * from t_class c left join t_area a on c.fk_area_id=a.pk_area_id
+	      <where>
+	       <if test="param1 !=null">
+	         and f_class_name like "%"#{param1}"%"
+	       </if>
+	       <if test="param2 !=null">
+	           and f_area_name like "%"#{param2}"%"
+	       </if>
+	      </where>
+	      limit #{param3},4
+	</select>
+	
+	<update id="updateByItem" >
+	 	update t_class set f_class_tel=#{param1},f_class_principal=#{param2} where pk_class_id=#{param3}
+	</update>
+	
+	<select id="findAll"  resultMap="classRM">
+	  	select * from t_class 
+	     
+	</select>
+	
+	<select id="getTotalCountByItem"  resultType="int">
+	  	select count(*) from t_class c left join t_area a on c.fk_area_id=a.pk_area_id
+	      <where>
+	       <if test="param1 !=null">
+	          and f_class_name like "%"#{param1}"%"
+	       </if>
+	       <if test="param2 !=null">
+	          and f_area_name like "%"#{param2}"%"
+	       </if>
+	      </where>
+	</select>
+</mapper>

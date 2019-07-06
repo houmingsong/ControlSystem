@@ -1,0 +1,396 @@
+<%@ page language="java" contentType="text/html; charset=utf-8"
+    pageEncoding="utf-8" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> 
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>添加出库信息</title>
+    <link rel="stylesheet" href="../css/bootstrap-3.3.7-dist/css/bootstrap.css">
+    <script type="text/javascript" src="../jquery/jquery-2.1.4.js"></script>
+    <style>
+        .container{
+            margin-top:50px;
+            height:700px;
+            border:1px solid black;
+        }
+        .col-sm-12{
+            border:1px solid black;
+            background-color:#dcdcdc;
+            height:50px;
+            text-align:center;
+        }
+        h4{
+            line-height:30px;
+        }
+        .col-sm-2,.col-sm-10{
+            height:600px;
+            border:1px solid black;
+        }
+        .col-sm-2{
+            background-color:#dcdcdc;
+            padding:0px;
+        }
+        ul{
+            list-style-type:none;
+        }
+        .col-sm-3{
+            margin-top:50px;
+        }
+        #div231{
+            background-color:white;
+            border: none;
+        }
+        .table{
+        	width:80%;
+        	margin:30px auto;
+        }
+        .addobj{
+        	width:90%;
+        	height: 90%;
+        	margin: 10px auto;
+        	background-color: #F5F5F5;
+        	border:1px solid black; 
+        	position:absolute;
+     		z-index: 10;
+     		display: none;
+     		text-align: center;
+        }
+        th{
+        	text-align: center;
+        	background-color: #D3D3D3;
+        }
+        .cxx{
+        	margin: 30px auto;
+        }
+        #div-table{
+        	margin:0 auto;
+        	width: 80%;
+        	height: 350px;
+        	overflow: auto;
+        }
+    </style>
+	<script>
+	$(function(){
+		var thispage = parseInt($("#thispage").html());
+		var maxpage = $("#maxpage").html();
+		var instrumentname = $("input[name=instrumentname]").val();
+		var instrumenttype = $("input[name=instrumenttype]").val();
+		var instrumentkind = $("input[name=instrumentkind]").val();
+		
+		var $btn1 = $("input[id=btn1]");
+		var $btn2 = $("input[id=btn2]");
+		var $btn3 = $("input[id=btn3]");
+		var $btn4 = $("input[id=btn4]");
+		var $btn5 = $("input[id=btn5]");
+		var $btn6 = $("input[id=btn6]");
+		
+		$("#yes").click(function(){
+			var minclass = $("option:selected").val();
+			var $tr = $("#table tr td:last-child");
+			var bz = 0;
+			if($tr.length==0){
+				alert("请选择物品");
+				return;
+			}
+			var str = "";
+			$.each($tr,function(){
+				var number = $(this).children().first().val();
+				if(number==null||number==0){
+					alert("数量必须大于0");
+					bz=1;
+					return false;
+					
+				}
+				var id = $(this).children().first().next().val();
+				str+=number+","+id+"&";
+				
+			});
+			if(bz==1){
+				return;
+			}
+			str=str.substring(0,str.length-1);
+			$.get("../addWareHouse",{str:str,minclass:minclass},function(data){
+				if("出库成功"==data){
+					alert(data);
+					$("#table tr td").remove();
+				}else{
+					alert(data);
+				}
+				
+			});
+		});
+		$("#add").click(function(){
+			$(".addobj").css("display","block");
+			var $tr1 = $("#xzobj input[type=hidden]");
+    		var $td = $("#table input[type=hidden]");
+    		$.each($td,function(i,e){
+    			$.each($tr1,function(j,n){
+    				if($(e).val()==$(n).val()){
+    					$(n).val("已添加");
+    					$(n).parent().parent().css("opacity","0.5");
+    					$(n).unbind();
+    				}
+    			});
+    		});
+		});
+			$.getJSON("../instrument",{thispage:thispage},instrumentfindthis);
+			$btn1.click(function(){
+				
+				var instrumentname = $("input[name=instrumentname]").val();
+	    		var instrumenttype = $("input[name=instrumenttype]").val();
+	    		var instrumentkind = $("input[name=instrumentkind]").val();
+				$.getJSON("../instrument",{thispage:1,instrumentname:instrumentname,
+					instrumenttype:instrumenttype,instrumentkind:instrumentkind},instrumentfindthis);
+			});
+			$btn2.click(function(){
+				var thispage = parseInt($("#thispage").html());
+				if(thispage<2){
+					alert("已经是第一页");
+					return;
+				}
+	    		var maxpage = $("#maxpage").html();
+	    		var instrumentname = $("input[name=instrumentname]").val();
+	    		var instrumenttype = $("input[name=instrumenttype]").val();
+	    		var instrumentkind = $("input[name=instrumentkind]").val();
+				$.getJSON("../instrument",{thispage:thispage-1,instrumentname:instrumentname,
+					instrumenttype:instrumenttype,instrumentkind:instrumentkind},instrumentfindthis);
+			});
+			$btn3.click(function(){
+				var thispage = parseInt($("#thispage").html());
+	    		var maxpage = parseInt($("#maxpage").html());
+	    		if(thispage==maxpage){
+	    			alert("已经是最后一页了");
+	    			return;
+	    		}
+	    		var instrumentname = $("input[name=instrumentname]").val();
+	    		var instrumenttype = $("input[name=instrumenttype]").val();
+	    		var instrumentkind = $("input[name=instrumentkind]").val();
+				$.getJSON("../instrument",{thispage:thispage+1,instrumentname:instrumentname,
+					instrumenttype:instrumenttype,instrumentkind:instrumentkind},instrumentfindthis);
+			});
+			$btn4.click(function(){
+				var thispage = parseInt($("#thispage").html());
+	    		var maxpage = $("#maxpage").html();
+	    		var instrumentname = $("input[name=instrumentname]").val();
+	    		var instrumenttype = $("input[name=instrumenttype]").val();
+	    		var instrumentkind = $("input[name=instrumentkind]").val();
+				$.getJSON("../instrument",{thispage:maxpage,instrumentname:instrumentname,
+					instrumenttype:instrumenttype,instrumentkind:instrumentkind},instrumentfindthis);
+			});
+			$btn5.click(function(){
+				var instrumentname = $("input[name=instrumentname]").val();
+	    		var instrumenttype = $("input[name=instrumenttype]").val();
+	    		var instrumentkind = $("input[name=instrumentkind]").val();
+				$.getJSON("../instrument",{thispage:1,instrumentname:instrumentname,
+					instrumenttype:instrumenttype,instrumentkind:instrumentkind},instrumentfindthis);
+				var $tr1 = $("#xzobj input[type=hidden]");
+	    		var $td = $("#table input[type=hidden]");
+	    		$.each($td,function(i,e){
+	    			$.each($tr1,function(j,n){
+	    				if($(e).val()==$(n).val()){
+	    					$(n).val("已添加");
+	    					$(n).parent().parent().css("opacity","0.5");
+	    					$(n).unbind();
+	    				}
+	    			});
+	    		});
+				
+			});
+			$btn6.click(function(){
+				$(".addobj").css("display","none");
+				
+			});
+			
+	});
+		
+		function instrumentfindthis(data){
+    		var $table = $("#xzobj");
+    		var str = "<tr><th>名称</th><th>类别</th><th>主要用途</th><th>防治类型</th><th>操作</th></tr>";
+    		$.each(data.list,function(i,n){
+    			str+="<tr><td>"+n.name+"</td><td>"+n.kind+"</td><td>"+n.use+"</td><td>"+n.defendType+"</td><td><input type='button' class='addthis' value=添加  /><input type='hidden' value="+n.id+" /></td></tr>";
+    			
+    		});
+    		$table.empty();
+    		$table.append(str);
+    		$("#thispage").html(data.currentPage);
+    		$("#maxpage").html(data.totalPage);
+    		var $addthis = $(".addthis");
+    		$.each($addthis,function(){
+				$(this).click(addthis);
+			});
+    		var $tr1 = $("#xzobj input[type=hidden]");
+    		var $td = $("#table input[type=hidden]");
+    		$.each($td,function(i,e){
+    			$.each($tr1,function(j,n){
+    				if($(e).val()==$(n).val()){
+    					$(n).val("已添加");
+    					$(n).parent().parent().css("opacity","0.5");
+    					$(n).unbind();
+    				}
+    			});
+    		});
+    	}
+		function addthis(){
+			
+			var id = $(this).next().val();
+			var td3 = $(this).parent().prev().html();
+			var td2 = $(this).parent().prev().prev().prev().html();
+			var td1 = $(this).parent().prev().prev().prev().prev().html();
+			$(this).val("已添加");
+			$(this).parent().parent().css("opacity","0.5");
+			$(this).unbind();
+			$("#table").append("<tr><td>"+td1+"</td><td>"+td2+"</td><td>"+td3+"</td><td><input type='number' min=0 /><input type='hidden' value="+id+" /><input type='button' value='删除' class='delthis' /></td></tr>");
+			$(".delthis").click(delthis);
+		}
+		function delthis(){
+			$(this).parent().parent().remove();
+			var $tr1 = $("#xzobj input[type=hidden]");
+    		var thisid = $(this).prev().val();
+    		$.each($tr1,function(){
+    			if($(this).val()==thisid){
+    				$(this).parent().parent().css("opacity","1");
+    				$(this).prev().val("添加");
+    				$(this).prev().click(addthis);
+    			}
+    		});
+		}
+		
+	</script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12"><h4>森林病虫害防治系统</h4></div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-2">
+            <ul>
+                <li class="head1"><a href="index.jsp">森林病虫害防治系统</a></li>
+            </ul>
+            <ul>
+                <li>资料整理</li>
+                <li>
+                    <ul>
+                        <li><a href="worm.jsp">虫害一览</a></li>
+                        <li><a href="disease.jsp">病害一览</a></li>
+                        <li><a href="mouse.jsp">鼠害一览</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul>
+                <li class="head2">灾情防治</li>
+                <li>
+                    <ul>
+                        <li><a href="area.jsp">区域一览</a></li>
+                        <li><a href="minclass.jsp">小班管理</a></li>
+                        <li><a href="event.jsp">事件记录</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul>
+                <li class="head2">专家会商</li>
+                <li>
+                    <ul>
+                        <li><a href="expert.jsp">专家一览</a></li>
+                        <li><a href="talk.jsp">会商灾情</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul>
+                <li class="head2">药剂器械出库管理</li>
+                <li>
+                    <ul>
+                        <li><a href="medicine.jsp">药剂管理</a></li>
+                        <li><a href="house.jsp">出库管理</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul>
+                <li class="head2">系统信息</li>
+                <li>
+                    <ul>
+                        <li><a href="user.jsp">用户管理</a></li>
+                        <li><a href="log.jsp">日志一览</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-sm-10">
+        	<div class="addobj">
+        		<h3>添加物品</h3>
+				<table id="xzobj" class="table table-hover table-bordered">
+					
+				</table>
+				
+				 <input type="button"  id="btn1" value="|<"/>
+                <input type="button" id="btn2" value="<"/>
+                <span id="thispage">1</span>/<span id="maxpage">8</span>
+                <input type="button"  id="btn3" value=">"/>
+                <input type="button" id="btn4" value=">|"/>
+                <div class="cxx">
+                 <label>药剂名称:
+                 <input type="text" name="instrumentname" />
+                 </label>
+                 <label> 防治类型:
+                 <input type="text" name="instrumenttype"/>
+                 </label>
+                 <label> 类别:
+                 <input type="text" name="instrumentkind"/>
+                 </label>
+                 <label><input type="button" value="查询" id="btn5"/></label>
+                 </div>	
+                 
+              	 <label><input type="button" value="确定" id="btn6"/></label>
+			</div>
+            <div class="row">
+                <div class="col-sm-12" id="div231">
+                    <h3>添加出库信息</h3>
+                </div>
+            </div>
+			
+            <div class="row">
+
+                <form action="#" method="get">
+                    <div class="row">
+                        <div class="col-sm-3 col-sm-push-3">领用小班:</div>
+                        <div class="col-sm-3  col-sm-push-1">
+                            <select name="minclass">
+                               <c:forEach items="${clist}" var="cl">
+                               		<option>${cl.className}</option>
+                               </c:forEach>
+                            </select>
+                        </div>
+                        <div class="col-sm-3 col-sm-push-1">出库人:</div>
+                        <div class="col-sm-3 col-sm-pull-1">
+                           <span>${user.userName}</span>	
+                        </div>
+                    </div>
+                    <div id="div-table" >
+                    <table class="table table-hover table-bordered" id="table">
+						<tr>
+							<th>物品名称</th>
+							<th>类型</th>
+							<th>防治类型</th>
+							<th>领用数量</th>
+						</tr>
+                    </table>
+					</div>
+
+                    <div class="row">
+                        <div class="col-sm-3  col-sm-push-5"><input type="button" value="添加物品" id="add"/></div>
+                        <div class="col-sm-3  col-sm-push-4"><input type="button" value="出库" id="yes"/></div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12"></div>
+    </div>
+</div>
+</body>
+</html>

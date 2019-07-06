@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.AreaMapper">
+   <resultMap id="areaRM" type="areaBean">
+          <id property="id" column="pk_area_id"/>
+          <result property="areaName" column="f_area_name" />
+          <result property="treeKind" column="f_area_treeKind" />
+          <result property="treeAdvantage" column="f_area_treeAdvantage" />
+          <result property="areaKind" column="f_area_areaKind" />
+          <result property="className" column="f_class_name" />
+   </resultMap>
+   
+	<select id="findByItem" resultMap="areaRM">
+	      select a.*,c.f_class_name from t_area a left join t_class c on a.pk_area_id=c.fk_area_id
+	      <where>
+	       <if test="param1!=null">
+	         and a.f_area_name like "%"#{param1}"%"
+	       </if>
+	       <if test="param2!=null">
+	         and a.f_area_treeKind like "%"#{param2}"%"
+	       </if>
+		   <if test="param3!=null">
+	         and c.f_class_name like "%"#{param3}"%"
+	       </if>
+	      
+	      </where>
+	       
+	       limit #{param4},4
+	      
+	</select>
+	
+	<select id="getTotalCountByItem" resultType="int">
+	      select count(*) from t_area a left join t_class c on a.pk_area_id=c.fk_area_id
+	      <where>
+	       <if test="param1!=null">
+	         and a.f_area_name like "%"#{param1}"%"
+	       </if>
+	       <if test="param2!=null">
+	         and a.f_area_treeKind like "%"#{param2}"%"
+	       </if>
+		   <if test="param3!=null">
+	         and c.f_class_name like "%"#{param3}"%"
+	       </if>
+	      </where>
+	</select>
+	
+	<insert id="add" parameterType="areaBean">
+	 		insert into t_area values(null,#{areaName},#{treeKind},#{treeAdvantage},#{areaKind})
+	</insert>
+	
+		<select id="findByIte" resultMap="areaRM">
+	      select a.*,c.f_class_name from t_area a left join t_class c on a.pk_area_id=c.fk_area_id
+	      <where>
+	       <if test="param1!=null">
+	         and a.f_area_name like "%"#{param1}"%"
+	       </if>
+	       <if test="param2!=null">
+	         and a.f_area_treeKind like "%"#{param2}"%"
+	       </if>
+		   <if test="param3!=null">
+	         and c.f_class_name like "%"#{param3}"%"
+	       </if>
+	      
+	      </where>
+	</select>
+</mapper>

@@ -1,0 +1,92 @@
+package com.j1635web.dao.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+
+import com.j1635web.Mapper.AreaMapper;
+import com.j1635web.bean.AreaBean;
+import com.j1635web.dao.IAreaDao;
+import com.j1635web.util.DBUtil;
+
+/**
+ * 区域持久接口实现类
+ * @author 罗义桃
+ *
+ */
+public class AreaDaoImpl implements IAreaDao{
+
+	@Override
+	public List<AreaBean> findByItem(String areaName, String treeKind, String className, Integer currentPage) {
+		List<AreaBean> list = new ArrayList<AreaBean>();
+		SqlSession session = null;
+		try {
+			Integer index = (currentPage-1)*4;
+			session	= DBUtil.getSqlSession();
+			AreaMapper areaMapper = session.getMapper(AreaMapper.class);
+			list = areaMapper.findByItem(areaName, treeKind, className, index, currentPage);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return list;
+	}
+
+	@Override
+	public void add(AreaBean areaBean) {
+		SqlSession session = null;
+		try {
+			session	= DBUtil.getSqlSession();
+			AreaMapper areaMapper = session.getMapper(AreaMapper.class);
+			
+			areaMapper.add(areaBean);
+			session.commit();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+	}
+	
+	@Override
+	public int getTotalCountByItem(String areaName, String treeKind, String className) {
+		SqlSession session = null;
+		try {
+			session	= DBUtil.getSqlSession();
+			AreaMapper areaMapper = session.getMapper(AreaMapper.class);
+			return areaMapper.getTotalCountByItem(areaName, treeKind, className);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return 0;
+	}
+	public static void main(String[] args) {
+		AreaDaoImpl a=new AreaDaoImpl();
+		System.out.println(a.findByIte(null, null, null));
+	}
+
+	@Override
+	public List<AreaBean> findByIte(String areaName, String treeKind, String className) {
+		List<AreaBean> list = new ArrayList<AreaBean>();
+		SqlSession session = null;
+		try {
+		
+			session	= DBUtil.getSqlSession();
+			AreaMapper areaMapper = session.getMapper(AreaMapper.class);
+			list = areaMapper.findByIte(areaName, treeKind, className);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return list;
+	}
+}

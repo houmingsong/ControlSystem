@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.ThingMapper">
+	<resultMap id="thingRM" type="thingBean">
+		<id property="id" column="pk_thing_id" />
+		<result property="name" column="f_thing_name" />
+		<result property="image" column="f_thing_image" />
+		<result property="time" column="f_thing_time" />
+		<result property="kind" column="f_thing_kind" />
+		<result property="condition" column="f_thing_condition" />
+		<result property="description" column="f_thing_description" />
+		<result property="find" column="f_thing_find" />
+		<result property="areaName" column="f_thing_area" />
+		<result property="loss" column="f_thing_loss" />
+		<result property="acreage" column="f_thing_acreage" />
+		<result property="defend" column="f_thing_defend" />
+		<result property="application" column="f_thing_application" />
+	</resultMap>
+
+	<select id="findByItem" resultMap="thingRM">
+		select * from t_thing t left join t_area a on
+		t.fk_area_id=a.pk_area_id
+		<where>
+			<if test="param1!=null">
+				and t.f_thing_name like "%"#{param1}"%"
+			</if>
+			<if test="param2!=null">
+				and t.f_thing_condition like "%"#{param2}"%"
+			</if>
+			<if test="param3!=null">
+				and a.f_area_name like "%"#{param3}"%"
+			</if>
+			<if test="param4!=null">
+				and t.f_thing_time &gt;= #{param4}
+			</if>
+			<if test="param5!=null">
+				and t.f_thing_time &lt;= #{param5}
+			</if>
+		</where>
+		limit #{param6},4
+	</select>
+
+	<update id="updateById">
+		update t_thing set f_thing_condition=#{param1},f_thing_defend=#{param2}
+		where pk_thing_id=#{param3}
+	</update>
+
+	<select id="findById" parameterType="int" resultMap="thingRM">
+		select * from t_thing where pk_thing_id=#{id}
+	</select>
+
+	<insert id="add" parameterType="thingBean">
+		insert into t_thing
+		values(null,#{areaId},#{name},#{image},#{time},#{kind},#{condition},#{description},#{find},#{areaName},#{loss},#{acreage},#{defend},#{application})
+	</insert>
+
+	<select id="getTotalCountByItem" resultType="int">
+		select count(*) from t_thing t left join t_area a on
+		t.fk_area_id=a.pk_area_id
+		<where>
+			<if test="param1!=null">
+				and t.f_thing_name like "%"#{param1}"%"
+			</if>
+			<if test="param2!=null">
+				and t.f_thing_condition like "%"#{param2}"%"
+			</if>
+			<if test="param3!=null">
+				and a.f_area_name like "%"#{param3}"%"
+			</if>
+			<if test="param4!=null">
+				and t.f_thing_time &gt;= #{param4}
+			</if>
+			<if test="param5!=null">
+				and t.f_thing_time &lt;= #{param5}
+			</if>
+		</where>
+	</select>
+</mapper>

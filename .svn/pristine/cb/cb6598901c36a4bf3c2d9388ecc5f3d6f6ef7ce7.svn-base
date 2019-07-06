@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.WormMapper">
+   <resultMap id="wormRM" type="wormBean">
+          <id property="id" column="pk_worm_id"/>
+          <result property="name" column="f_worm_name" />
+          <result property="host" column="f_worm_host" />
+          <result property="breed" column="f_worm_breed" />
+          <result property="enemy" column="f_worm_enemy" />
+          <result property="bigImage" column="f_worm_bigImage" />
+          <result property="smallImage" column="f_worm_smallImage" />
+          <result property="defend" column="f_worm_defend" />
+          <result property="harm" column="f_worm_harm" />
+   </resultMap>
+	
+	
+
+	<select id="findByItem"  resultMap="wormRM">
+	      select * from t_worm
+	      <where>
+	       <if test="param1!=null">
+	         and f_worm_name like "%"#{param1}"%"
+	       </if>
+	       <if test="param2!=null">
+	           and f_worm_host like "%"#{param2}"%"
+	       </if>
+	      </where>
+	      limit #{param3},#{param4}
+	</select>
+	
+	<select id="findById"  parameterType="int"  resultMap="wormRM" >
+	 select * from t_worm where pk_worm_id=#{id}
+	</select>
+	
+	<insert id="add" parameterType="wormBean">
+	 insert into t_worm values(null,#{name},#{host},#{breed},#{enemy},#{bigImage},#{smallImage},#{defend},#{harm})
+	</insert>
+	<select id="getCount" resultType="int"> select count(*) from t_worm </select>
+</mapper>

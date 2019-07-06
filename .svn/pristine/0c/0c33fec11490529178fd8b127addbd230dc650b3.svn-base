@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.MeetingMapper">
+   <resultMap id="meetingRM" type="meetingBean">
+          <id property="id" column="pk_meeting_id"/>
+          <result property="person" column="f_meeting_person" />
+          <result property="time" column="f_meeting_time" />
+          <result property="result" column="f_meeting_result" />
+   </resultMap>
+	<select id="findByThingId"  parameterType="int"  resultMap="meetingRM" >
+	  select * from t_meeting m left join  t_thing t on m.fk_thing_id=t.pk_thing_id where t.pk_thing_id=#{thingId}
+	</select>
+	<insert id="add" parameterType="meetingBean">
+	 insert into t_meeting values(null,#{thingId},#{person},#{time},#{result})
+	</insert>
+	<select id="getCount" resultType="int">
+	   select count(*) from t_meeting
+	</select>
+</mapper>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.ExpertMapper">
+   <resultMap id="expertRM" type="expertBean">
+          <id property="id" column="pk_expert_id"/>
+          <result property="name" column="f_expert_name" />
+          <result property="birthday" column="f_expert_birthday" />
+          <result property="sex" column="f_expert_sex" />
+          <result property="expertise" column="f_expert_expertise" />
+          <result property="tel" column="f_expert_tel" />
+          <result property="address" column="f_expert_address" />
+          <result property="job" column="f_expert_job" />
+          <result property="company" column="f_expert_company" />
+          <result property="email" column="f_expert_email" />
+          <result property="image" column="f_expert_image" />
+   </resultMap>
+	<select id="findExpertByCondition" resultMap="expertRM">
+	      select * from t_expert
+	      <where>
+	       <if test="param1!=null">
+	         and f_expert_name like "%"#{param1}"%"
+	       </if>
+	       <if test="param2!=null">
+	           and f_expert_expertise like "%"#{param2}"%"
+	       </if>
+	       <if test="param3!=null">
+	           and f_expert_expertise like "%"#{param3}"%"
+	       </if>
+	      </where>
+	      limit #{param4},#{param5}
+	</select>
+	<delete id="delById" >
+	 delete from t_expert where pk_expert_id=#{id}
+	</delete>
+	<update id="updateById" >
+	 update t_expert set f_expert_tel=#{param1},f_expert_job=#{param2},f_expert_company=#{param3},f_expert_email=#{param4} where pk_expert_id=#{param5}
+	</update>
+	<select id="findById"  parameterType="int"  resultMap="expertRM" >
+	 select * from t_expert where pk_expert_id=#{id}
+	</select>
+	<insert id="addExpert" parameterType="expertBean">
+	 insert into t_expert values(null,#{name},#{sex},#{birthday},#{image},#{expertise},#{job},#{tel},#{company},#{address},#{email})
+	</insert>
+	<select id="getCount" resultType="int">
+	   select count(*) from t_expert
+	</select>
+</mapper>

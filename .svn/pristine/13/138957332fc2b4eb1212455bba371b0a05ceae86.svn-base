@@ -1,0 +1,51 @@
+package com.j1635web.service.impl;
+
+import java.util.List;
+
+import com.j1635web.bean.DiseaseBean;
+import com.j1635web.bean.PageBean;
+import com.j1635web.dao.IDiseaseDao;
+import com.j1635web.dao.impl.DiseaseDaoImpl;
+import com.j1635web.service.IDiseaseService;
+
+public class DiseaseServiceImpl implements IDiseaseService{
+	private IDiseaseDao dao=new DiseaseDaoImpl();
+
+	@Override
+	public void add(DiseaseBean diseaseBean) {
+		dao.add(diseaseBean);
+	}
+
+	@Override
+	public DiseaseBean findById(Integer id) {
+		// TODO Auto-generated method stub
+		return dao.findById(id);
+	}
+
+	@Override
+	public PageBean<DiseaseBean> findByItem(String name, String symptom, Integer currentPage) {
+		//封装虫害bean，返回web层
+	    PageBean<DiseaseBean> pageBean=new PageBean<DiseaseBean>();
+	  
+	    int currentCount=4;
+	    //封装当前页
+	    pageBean.setCurrentPage(currentPage);
+	    //封装每页显示条数
+	    pageBean.setCurrentCount(currentCount);
+	    //封装总条数
+	    Integer totalCount=dao.getCount();
+	    pageBean.setTotalCount(totalCount);
+	    //分装总页数
+	    Integer totalPage = (int) Math.ceil(1.0*totalCount/currentCount);
+	    pageBean.setTotalPage(totalPage);
+	    //封装当前页显示的数据
+	    int index=(currentPage-1)*currentCount;
+	    List<DiseaseBean> list=dao.findByItem(name, symptom, index, currentCount);
+		pageBean.setList(list);
+	    return pageBean;
+	}
+	
+
+
+
+}

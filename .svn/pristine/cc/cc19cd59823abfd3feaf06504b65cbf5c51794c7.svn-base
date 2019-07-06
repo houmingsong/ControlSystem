@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.MouseMapper">
+   <resultMap id="mouseRM" type="mouseBean">
+          <id property="id" column="pk_mouse_id"/>
+          <result property="name" column="f_mouse_name" />
+          <result property="food" column="f_mouse_food" />
+          <result property="breed" column="f_mouse_breed" />
+          <result property="enemy" column="f_mouse_enemy" />
+          <result property="image" column="f_mouse_image" />
+          <result property="defend" column="f_mouse_defend" />
+          <result property="harm" column="f_mouse_harm" />
+   </resultMap>
+	
+	
+
+	<select id="findByItem"   resultMap="mouseRM">
+	      select * from t_mouse
+	      <where>
+	       <if test="param1!=null">
+	         and f_mouse_name like "%"#{param1}"%"
+	       </if>
+	      </where>
+	       limit #{param2},#{param3}
+	</select>
+	
+	<select id="findById"  parameterType="int"  resultMap="mouseRM" >
+	 select * from t_mouse where pk_mouse_id=#{id}
+	</select>
+	
+	<insert id="add" parameterType="mouseBean">
+	 insert into t_mouse values(null,#{name},#{food},#{breed},#{enemy},#{image},#{defend},#{harm})
+	</insert>
+	
+	<select id="getCount" resultType="int"> select count(*) from t_mouse </select>
+</mapper>

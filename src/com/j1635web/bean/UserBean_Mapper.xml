@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.UserMapper">
+   <resultMap id="userRM" type="userBean">
+          <id property="id" column="pk_user_id"/>
+          <result property="userName" column="f_user_userName" />
+          <result property="password" column="f_user_password" />
+          <result property="realName" column="f_user_realName" />
+          <result property="userLevel" column="f_user_userLevel" />
+   </resultMap>
+	<insert id="add" parameterType="userBean">
+	 insert into t_user values(null,#{userName},#{password},#{realName},#{userLevel})
+	</insert>
+	<delete id="del" >
+	 delete from t_user where pk_user_id=#{id}
+	</delete>
+
+	<update id="update">
+		 update t_user set f_user_password=#{arg0},f_user_userLevel=#{arg1}  where pk_user_id=#{arg2}
+	</update>
+
+	<select id="findByItem"   resultMap="userRM" >
+	      select * from t_user 
+	      <where>
+	      <if test="param1!=null">
+	      and f_user_userLevel = #{param1}
+	      </if>
+	      </where>
+	      order by f_user_userLevel desc limit #{param2},4
+	</select>
+	
+	<select id="findById" parameterType="int" resultMap="userRM" >
+	 select * from t_user where pk_user_id=#{id} 
+	</select>
+	
+	<select id="getTotalCountByItem" resultType="int">
+	   select count(*) from t_user where f_user_userLevel like "%" #{param1}"%"
+	</select>
+	
+	<select id="login" parameterType="userBean" resultMap="userRM">
+   		select * from t_user where f_user_userName=#{param1} and f_user_password=#{param2}
+   </select>
+</mapper>

@@ -1,0 +1,91 @@
+package com.j1635web.dao.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.ibatis.session.SqlSession;
+
+import com.j1635web.Mapper.DiseaseMapper;
+import com.j1635web.bean.DiseaseBean;
+import com.j1635web.dao.IDiseaseDao;
+import com.j1635web.util.DBUtil;
+
+public class DiseaseDaoImpl  implements IDiseaseDao {
+
+	@Override
+	public void add(DiseaseBean diseaseBean) {
+		SqlSession session=null;
+		try {
+			session=DBUtil.getSqlSession();
+			
+			DiseaseMapper diseaseMapper=session.getMapper(DiseaseMapper.class);
+			
+			diseaseMapper.add(diseaseBean);
+			
+			session.commit();
+		}catch (Exception e) {
+			 e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		
+	}
+
+	@Override
+	public DiseaseBean findById(Integer id) {
+		SqlSession session=null;
+		DiseaseBean diseaseBean=null;
+		try {
+			session=DBUtil.getSqlSession();
+			
+			DiseaseMapper diseaseMapper=session.getMapper(DiseaseMapper.class);
+			
+			diseaseBean=diseaseMapper.findById(id);
+		}catch (Exception e) {
+			 e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return diseaseBean;
+	}
+
+
+
+	@Override
+	public List<DiseaseBean> findByItem(String name, String symptom, int currentPage) {
+		SqlSession session=null;
+		List<DiseaseBean> list=new ArrayList<DiseaseBean>();
+		try {
+			session=DBUtil.getSqlSession();
+			
+			DiseaseMapper diseaseMapper=session.getMapper(DiseaseMapper.class);
+			
+			int index=(currentPage-1)*4;
+			
+			list=diseaseMapper.findByItem(name, symptom, index, currentPage);
+		}catch (Exception e) {
+			 e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return list;
+	}
+
+
+
+	@Override
+	public int getCount(String name, String symptom) {
+		SqlSession session=null;
+		Integer totalCount=0;
+		try {
+			 session=DBUtil.getSqlSession();
+			 DiseaseMapper diseaseMapper=session.getMapper(DiseaseMapper.class);
+			  totalCount = diseaseMapper.getCount(name, symptom);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			session.close();
+		}
+		return totalCount;
+	}
+}

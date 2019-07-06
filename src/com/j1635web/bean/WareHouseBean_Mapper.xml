@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.j1635web.Mapper.WareHouseMapper">
+   <resultMap id="WarehouseRM" type="warehouseBean">
+          <id property="id" column="pk_warehouse_id"/>
+          <result property="instrumentId" column="fk_instrument_id" />
+          <result property="classId" column="fk_class_id" />
+          <result property="number" column="f_warehouse_number" />
+          <result property="time" column="f_warehouse_time" />
+          <result property="userName" column="f_warehouse_userName" />
+          <result property="className" column="f_class_name" />
+   </resultMap>
+    <resultMap id="findwarehouseRM" type="findWareHouse">
+          <result property="className" column="f_class_name" />
+          <result property="houseUserName" column="f_warehouse_userName" />
+          <result property="date" column="f_warehouse_time" />
+          <result property="instrumentName" column="f_instrument_name" />
+          <result property="instrumentType" column="f_instrument_kind" />
+          <result property="instrumentKind" column="f_instrument_defendType" />
+          <result property="instrumentNumber" column="f_warehouse_number" />
+   </resultMap>
+	<select id="findByItem" resultMap="WarehouseRM">
+	      SELECT w.*,c.f_class_name FROM t_warehouse w INNER JOIN t_class c ON w.fk_class_id = c.pk_class_id
+	      <where>
+	      	<if test="param1!=null">
+	      		and w.f_warehouse_time &gt; #{param1}
+	      	</if>
+	      	<if test="param2!=null">
+	      		and w.f_warehouse_time &lt; #{param2}
+	      	</if>
+	      	<if test="param3!=null">
+	      		and c.f_class_name like "%"#{param3}"%"
+	      	</if>
+	      </where>
+	      order by w.f_warehouse_time desc
+	      limit #{param4},5
+	     
+	</select>
+		
+	<select id="findCount" resultType="int">
+	    SELECT count(*) FROM t_warehouse w INNER JOIN t_class c ON w.fk_class_id = c.pk_class_id
+	      <where>
+	      	<if test="param1!=null">
+	      		and f_warehouse_time &gt; #{param1}
+	      	</if>
+	      	<if test="param2!=null">
+	      		and f_warehouse_time &lt; #{param2}
+	      	</if>
+	      	<if test="param3!=null">
+	      		and c.f_class_name like "%"#{param3}"%"
+	      	</if>
+	      </where>
+	</select>
+	<select id="findFWareHouseByItem" resultMap="findwarehouseRM">
+	  SELECT
+			c.f_class_name,
+			w.f_warehouse_userName,
+			w.f_warehouse_time,
+			i.f_instrument_name,
+			i.f_instrument_kind,
+			i.f_instrument_defendType,
+			w.f_warehouse_number
+		FROM
+			t_warehouse w
+		INNER JOIN t_instrument i ON w.fk_instrument_id = i.pk_instrument_id
+		INNER JOIN t_class c ON w.fk_class_id = c.pk_class_id
+		WHERE
+			w.fk_class_id = #{param1}
+		AND w.f_warehouse_userName =#{param2}
+		AND w.f_warehouse_time =#{param3}
+	     
+	</select>
+	<insert id="add" parameterType="warehouseBean">
+		insert INTO t_warehouse VALUES(null,#{instrumentId},#{classId},#{number},#{time},#{userName});
+	</insert>
+</mapper>
